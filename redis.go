@@ -839,6 +839,10 @@ func (c *Cacher) decode(reply interface{}, err error, val interface{}) error {
 	return c.unmarshal([]byte(str), val)
 }
 
+func (c *Cacher) GetPool() *redis.Pool {
+	return c.pool
+}
+
 // closePool 程序进程退出时关闭连接池
 func (c *Cacher) closePool() {
 	ch := make(chan os.Signal, 1)
