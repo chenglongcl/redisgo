@@ -105,6 +105,19 @@ func TestIncrDecr(t *testing.T) {
 	Equal(t, int64(1), val)
 }
 
+func TestHKeys(t *testing.T) {
+	var err error
+	c := getCacher()
+	c.Del("hKeyTest")
+	_, err = c.HSet("hKeyTest", "field1", "foo")
+	NoError(t, err)
+	_, err = c.HSet("hKeyTest", "field2", "bar")
+	NoError(t, err)
+	val, err := c.HKeys("hKeyTest")
+	NoError(t, err)
+	Equal(t, val, []string{"field1", "field2"})
+}
+
 func TestExpire(t *testing.T) {
 	var err error
 	c := getCacher()

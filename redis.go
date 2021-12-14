@@ -311,6 +311,12 @@ func (c *Cacher) HGetAll(key string, val interface{}) error {
 	return err
 }
 
+//Hkeys 命令用于获取哈希表中的所有域（field）。
+func (c *Cacher) HKeys(key string) (reply []string, err error) {
+	reply, err = redis.Strings(c.Do("HKEYS", c.getKey(key)))
+	return
+}
+
 // HExists 如果哈希表含有给定字段，返回 1 。 如果哈希表不含有给定字段，或 key 不存在，返回 0 。
 func (c *Cacher) HExists(key, field string) (reply int, err error) {
 	reply, err = Int(c.Do("HEXISTS", c.getKey(key), field))
