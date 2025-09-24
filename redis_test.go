@@ -186,3 +186,59 @@ func TestZcard(t *testing.T) {
 	Equal(t, int(1), val)
 	NoError(t, err)
 }
+
+func TestType(t *testing.T) {
+	c := getCacher()
+	var err error
+	keyString := "typeTestString"
+	keyList := "typeTestList"
+	keyHash := "typeTestHash"
+	keyZset := "typeTestZset"
+	keyNone := "typeTestNone"
+
+	// Clean up keys before starting
+	c.Del(keyString)
+	c.Del(keyList)
+	c.Del(keyHash)
+	c.Del(keyZset)
+	c.Del(keyNone)
+
+	// Test String
+	err = c.Set(keyString, "hello", 30)
+	NoError(t, err)
+	typeVal, err := c.Type(keyString)
+	NoError(t, err)
+	Equal(t, "string", typeVal)
+
+	// Test List
+	err = c.LPush(keyList, "world")
+	NoError(t, err)
+	typeVal, err = c.Type(keyList)
+	NoError(t, err)
+	Equal(t, "list", typeVal)
+
+	// Test Hash
+	_, err = c.HSet(keyHash, "field", "value")
+	NoError(t, err)
+	typeVal, err = c.Type(keyHash)
+	NoError(t, err)
+	Equal(t, "hash", typeVal)
+
+	// Test ZSet (Sorted Set)
+	_, err = c.ZAdd(keyZset, 1, "member1")
+	NoError(t, err)
+	typeVal, err = c.Type(keyZset)
+	NoError(t, err)
+	Equal(t, "zset", typeVal)
+
+	// Test None (non-existent key)
+	typeVal, err = c.Type(keyNone)
+	NoError(t, err)
+	Equal(t, "none", typeVal)
+
+	// Clean up after test
+	c.Del(keyString)
+	c.Del(keyList)
+	c.Del(keyHash)
+	c.Del(keyZset)
+}

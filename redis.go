@@ -170,7 +170,7 @@ func (c *Cacher) Exists(key string) (bool, error) {
 	return Bool(c.Do("EXISTS", c.getKey(key)))
 }
 
-//Del 删除键
+// Del 删除键
 func (c *Cacher) Del(key string) error {
 	_, err := c.Do("DEL", c.getKey(key))
 	return err
@@ -191,6 +191,17 @@ func (c *Cacher) TTL(key string) (ttl int64, err error) {
 func (c *Cacher) Expire(key string, expire int64) error {
 	_, err := Bool(c.Do("EXPIRE", c.getKey(key), expire))
 	return err
+}
+
+// Type 返回 key 所储存的值的类型。
+// "none" (key不存在)
+// "string" (字符串)
+// "list" (列表)
+// "set" (集合)
+// "zset" (有序集)
+// "hash" (哈希表)
+func (c *Cacher) Type(key string) (string, error) {
+	return String(c.Do("TYPE", c.getKey(key)))
 }
 
 // Incr 将 key 中储存的数字值增一
@@ -311,7 +322,7 @@ func (c *Cacher) HGetAll(key string, val interface{}) error {
 	return err
 }
 
-//Hkeys 命令用于获取哈希表中的所有域（field）。
+// Hkeys 命令用于获取哈希表中的所有域（field）。
 func (c *Cacher) HKeys(key string) (reply []string, err error) {
 	reply, err = redis.Strings(c.Do("HKEYS", c.getKey(key)))
 	return
@@ -323,7 +334,7 @@ func (c *Cacher) HExists(key, field string) (reply int, err error) {
 	return
 }
 
-//HDel 删除HASH表中字段,返回被成功移除的域的数量，不包括被忽略的域。
+// HDel 删除HASH表中字段,返回被成功移除的域的数量，不包括被忽略的域。
 func (c *Cacher) HDel(key, field string) (reply int, err error) {
 	reply, err = Int(c.Do("HDEL", c.getKey(key), field))
 	return
@@ -578,15 +589,15 @@ func (c *Cacher) ZRevrangeByScore(key string, from, to, offset int64, count int)
 	return redis.Int64Map(c.Do("ZREVRANGEBYSCORE", c.getKey(key), from, to, "WITHSCORES", "LIMIT", offset, count))
 }
 
-//为有序集 key 的成员 member 的 score 值加上增量 increment 。
-//返回member 成员的新 score 值，以字符串形式表示。
+// 为有序集 key 的成员 member 的 score 值加上增量 increment 。
+// 返回member 成员的新 score 值，以字符串形式表示。
 func (c *Cacher) ZIncrby(key, member string, increment int) (reply int, err error) {
 	reply, err = Int(c.Do("ZINCRBY", c.getKey(key), increment, member))
 	return
 }
 
-//Redis Zcard 命令用于计算集合中元素的数量。
-//当 key 存在且是有序集类型时，返回有序集的基数。 当 key 不存在时，返回 0 。
+// Redis Zcard 命令用于计算集合中元素的数量。
+// 当 key 存在且是有序集类型时，返回有序集的基数。 当 key 不存在时，返回 0 。
 func (c *Cacher) ZCard(key string) (reply int, err error) {
 	reply, err = Int(c.Do("ZCARD", c.getKey(key)))
 	return
