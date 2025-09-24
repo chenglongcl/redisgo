@@ -12,8 +12,6 @@ import (
 	"syscall"
 	"time"
 
-	// "github.com/aiscrm/cache"
-
 	"github.com/gomodule/redigo/redis"
 )
 
